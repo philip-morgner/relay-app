@@ -1,0 +1,86 @@
+schema {
+  query: QuerySchema
+  mutation: MutationSchema
+}
+
+input AuthenticationInputType {
+  username: String
+  email: String
+  password: String
+}
+
+type AuthenticationType {
+  access_token: String
+  user_id: ID
+  username: String
+  email: String
+  password: String
+  hasAvatar: Boolean
+  avatar: String
+}
+
+type MessageType {
+  message_id: ID
+  message: String
+  timestamp: String
+  author_id: String
+}
+
+type MutationSchema {
+  currUser(authUser: AuthenticationInputType): AuthenticationType
+  updateUser(userId: String!, payload: UpdateUserInputType): UpdateUserType
+  removeUser(userId: String!): RemoveUserType
+  addMessage(newMessage: NewMessageInputType): NewMessageType
+  removeMessage(messageId: String!): RemoveMessageType
+}
+
+input NewMessageInputType {
+  message: String
+  author_id: String
+}
+
+type NewMessageType {
+  message_id: ID
+  message: String
+  timestamp: String
+  author_id: String
+}
+
+type QuerySchema {
+  userList: [UserType]
+  user(userId: String): UserType
+  messageList: [MessageType]
+  message(messageId: String): MessageType
+}
+
+type RemoveMessageType {
+  message_id: ID
+}
+
+type RemoveUserType {
+  user_id: ID
+}
+
+input UpdateUserInputType {
+  username: String
+  email: String
+  password: String
+}
+
+type UpdateUserType {
+  user_id: ID
+  username: String
+  email: String
+  password: String
+  hasAvatar: Boolean
+  avatar: String
+}
+
+type UserType {
+  user_id: ID
+  username: String
+  email: String
+  password: String
+  hasAvatar: Boolean
+  avatar: String
+}
