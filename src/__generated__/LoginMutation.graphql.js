@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 1ffe6392c325c92129f289e498664460
+ * @relayHash 2535a4339fc5015f6126f310b2421084
  */
 
 /* eslint-disable */
@@ -19,8 +19,8 @@ export type LoginMutationVariables = {|
 |};
 export type LoginMutationResponse = {|
   +currUser: ?{|
-    +access_token: ?string,
     +user_id: ?string,
+    +access_token: ?string,
     +username: ?string,
     +email: ?string,
     +avatar: ?string,
@@ -39,8 +39,8 @@ mutation LoginMutation(
   $authUser: AuthenticationInputType
 ) {
   currUser(authUser: $authUser) {
-    access_token
     user_id
+    access_token
     username
     email
     avatar
@@ -78,14 +78,14 @@ v1 = [
       {
         "kind": "ScalarField",
         "alias": null,
-        "name": "access_token",
+        "name": "user_id",
         "args": null,
         "storageKey": null
       },
       {
         "kind": "ScalarField",
         "alias": null,
-        "name": "user_id",
+        "name": "access_token",
         "args": null,
         "storageKey": null
       },
@@ -140,11 +140,11 @@ return {
     "operationKind": "mutation",
     "name": "LoginMutation",
     "id": null,
-    "text": "mutation LoginMutation(\n  $authUser: AuthenticationInputType\n) {\n  currUser(authUser: $authUser) {\n    access_token\n    user_id\n    username\n    email\n    avatar\n    hasAvatar\n  }\n}\n",
+    "text": "mutation LoginMutation(\n  $authUser: AuthenticationInputType\n) {\n  currUser(authUser: $authUser) {\n    user_id\n    access_token\n    username\n    email\n    avatar\n    hasAvatar\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a4c674d7ad23f600db53d5a940305842';
+(node/*: any*/).hash = '5d5faadb27345564fdc3ee2c70b5aa9b';
 module.exports = node;

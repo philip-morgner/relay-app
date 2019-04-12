@@ -48,7 +48,7 @@ const fakeAuth = {
 const AuthButton = withRouter(({ history }) =>
   fakeAuth.isAuthenticated ? (
     <p>
-      Welcome!{" "}
+      Welcome!
       <button
         onClick={() => {
           fakeAuth.signout(() => history.push("/"));

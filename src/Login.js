@@ -2,40 +2,12 @@ import React from "react";
 import environment from "./environment";
 import graphql from "babel-plugin-relay/macro";
 import { commitMutation } from "react-relay";
-import { css } from "glamor";
-
-const container = css({
-  width: 300,
-  height: 270,
-  borderRadius: 10,
-  boxShadow: "1px 2px #B2B2B2",
-  backgroundColor: "#D4EFFF",
-  margin: "50px auto",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center"
-});
-
-const pageTitle = css({
-  margin: 20,
-  // bulma css overwrites default
-  fontSize: "2em"
-});
-
-const inputStyle = css({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  margin: 8
-});
-
-const buttonContainerStyle = css({
-  width: "inherit",
-  display: "flex",
-  justifyContent: "flex-end",
-  paddingRight: 16,
-  marginTop: 16
-});
+import {
+  loginContainer as container,
+  pageTitle,
+  inputStyle,
+  buttonContainerStyle
+} from "./styles";
 
 export default class Login extends React.Component {
   state = {
@@ -57,6 +29,7 @@ export default class Login extends React.Component {
       return;
     }
     sessionStorage.setItem("access_token", currUser.access_token);
+    sessionStorage.setItem("user", currUser.user_id);
     this.props.history.push("/home", { currUser });
   };
 
@@ -125,8 +98,8 @@ export default class Login extends React.Component {
 const mutation = graphql`
   mutation LoginMutation($authUser: AuthenticationInputType) {
     currUser(authUser: $authUser) {
-      access_token
       user_id
+      access_token
       username
       email
       avatar

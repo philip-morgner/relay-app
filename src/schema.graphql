@@ -27,8 +27,13 @@ type MessageType {
 }
 
 type MutationSchema {
+  registerUser(newUser: RegistrationInputType): RegistrationType
   currUser(authUser: AuthenticationInputType): AuthenticationType
-  updateUser(userId: String!, payload: UpdateUserInputType): UpdateUserType
+  updateUser(
+    userId: String!
+    updateUser: UpdateUserInputType
+    confirmPassword: String!
+  ): UserType
   removeUser(userId: String!): RemoveUserType
   addMessage(newMessage: NewMessageInputType): NewMessageType
   removeMessage(messageId: String!): RemoveMessageType
@@ -53,6 +58,16 @@ type QuerySchema {
   message(messageId: String): MessageType
 }
 
+input RegistrationInputType {
+  username: String
+  email: String
+  password: String
+}
+
+type RegistrationType {
+  access_token: String
+}
+
 type RemoveMessageType {
   message_id: ID
 }
@@ -67,17 +82,9 @@ input UpdateUserInputType {
   password: String
 }
 
-type UpdateUserType {
-  user_id: ID
-  username: String
-  email: String
-  password: String
-  hasAvatar: Boolean
-  avatar: String
-}
-
 type UserType {
   user_id: ID
+  access_token: String
   username: String
   email: String
   password: String

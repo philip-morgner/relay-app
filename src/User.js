@@ -3,41 +3,13 @@ import environment from "./environment";
 import { QueryRenderer } from "react-relay";
 import { pathOr } from "ramda";
 import graphql from "babel-plugin-relay/macro";
-import { css } from "glamor";
 import defaultAvatar from "./assets/default_avatar.png";
-
-const container = css({
-  margin: "0 32px",
-  padding: 8,
-  borderBottom: "1px dashed lightgrey",
-  display: "flex",
-  alignItems: "flex-start",
-  overflow: "hidden",
-  backgroundColor: "white"
-});
-
-const personalDataStyle = css({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  padding: 8,
-  marginLeft: 16,
-  "& div > dd": {
-    display: "inline-block",
-    width: 100,
-    textAlign: "left"
-  }
-});
-
-const imageStyle = css({
-  borderRadius: 50,
-  height: 50,
-  width: 50
-});
-
-const italic = css({
-  fontStyle: "italic"
-});
+import {
+  userContainer as container,
+  personalDataStyle,
+  imageStyle,
+  italic
+} from "./styles";
 
 class User extends React.Component {
   goToChat = userId => () => {
@@ -70,6 +42,17 @@ class User extends React.Component {
   }
 }
 
+const query = graphql`
+  query UserQuery($userId: String) {
+    user(userId: $userId) {
+      user_id
+      username
+      email
+      avatar
+    }
+  }
+`;
+
 export default variables => (
   <QueryRenderer
     environment={environment}
@@ -85,13 +68,3 @@ export default variables => (
     }}
   />
 );
-const query = graphql`
-  query UserQuery($userId: String) {
-    user(userId: $userId) {
-      user_id
-      username
-      email
-      avatar
-    }
-  }
-`;

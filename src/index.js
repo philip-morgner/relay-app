@@ -5,11 +5,13 @@ import "bulma/css/bulma.css";
 
 import App from "./App";
 import Login from "./Login";
+import SettingsManager from "./Settings";
 
 const routing = (
   <Router>
     <Route exact path="/" component={Login} />
     <Route path="/home" component={App} />
+    <Route path="/settings/:userId" component={SettingsManager} />
   </Router>
 );
 
