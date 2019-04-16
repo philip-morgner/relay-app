@@ -51,7 +51,7 @@ class EditComponent extends React.Component {
     return {};
   };
 
-  handleLogin = () => {
+  handleSubmit = () => {
     const variables = this.createVariables();
     if (!isEmpty(variables)) {
       commitMutation(environment, {
@@ -68,29 +68,29 @@ class EditComponent extends React.Component {
     }
   };
 
+  renderSuccessNotification = value => (
+    <div className="notification is-success">
+      <button
+        onClick={() => {
+          this.setState({ update: "" });
+        }}
+        className="delete"
+      />
+      {`${value} updated!`}
+    </div>
+  );
+
   render() {
     const { type, currUser } = this.props;
     const passwordType = type === "password";
     const updated = !isEmpty(this.state.update);
-    const { confirmValue, password, [this.props.type]: value } = this.state;
+    const { confirmValue, password, [type]: value } = this.state;
 
     return (
       <div>
-        {updated && (
-          <div className="notification is-success">
-            <button
-              onClick={() => {
-                this.setState({ update: "" });
-              }}
-              className="delete"
-            />
-            {this.state.update} updated!
-          </div>
-        )}
+        {updated && this.renderSuccessNotification(currUser[type])}
         <div className={inputStyle}>
-          <label htmlFor={`${type}`}>
-            {this.state.update || currUser[type]}
-          </label>
+          <label htmlFor={`${type}`}>{currUser[type]}</label>
           <input
             value={value}
             id={`${type}`}
@@ -119,7 +119,7 @@ class EditComponent extends React.Component {
           />
         </div>
         <div className={buttonContainerStyle}>
-          <button className="button is-success" onClick={this.handleLogin}>
+          <button className="button is-success" onClick={this.handleSubmit}>
             Submit
           </button>
         </div>

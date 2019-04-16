@@ -13,13 +13,14 @@ export const settingsStyle = css({
   padding: 8,
   border: "1px dashed grey",
   margin: "auto",
-  width: 400,
+  width: "100%",
+  height: "100%",
   justifyContent: "space-around"
 });
 
 export const avatarSmallStyle = css({
   height: 250,
-  width: 200
+  width: 180
 });
 export const avatarPreviewStyle = css({
   height: "80%",
@@ -36,17 +37,20 @@ export const uploadStyle = css({
   width: 200,
   display: "flex",
   flexDirection: "column",
-  justifyContent: "flex-end"
+  justifyContent: "center"
 });
 
 export const labelStyle = css({
   paddingBottom: 16
 });
 
+// TODO
+// style of buttons and img (img differs in size after file is chosen)
+// handleImageClick: make avatarPreviewStyle, another click: back to normal (avatarSmallStyle)
 class EditAvatarComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { image: {} };
+    this.state = { image: {}, preview: null };
     this.chooseFile = React.createRef();
   }
 
@@ -59,9 +63,14 @@ class EditAvatarComponent extends React.Component {
     console.log(image.size);
     if (image.size > MAX_IMAGE_SIZE) {
       // add error handling
+      console.log("image too big");
       return;
     }
-    this.setState({ image });
+    this.setState({ image, preview: URL.createObjectURL(image) });
+  };
+
+  clearImage = () => {
+    this.setState({ image: {}, preview: null });
   };
 
   send = () => {
@@ -78,7 +87,6 @@ class EditAvatarComponent extends React.Component {
     });
   };
 
-  // refetch does not work, need cachebreaker for img src
   handleSubmit = () => {
     this.send()
       .then(() => window.location.reload())
@@ -89,12 +97,24 @@ class EditAvatarComponent extends React.Component {
     const { image } = this.state;
     const { avatar } = pathOr("", ["user"], this.props);
     const imageChosen = !isEmpty(image);
+    const { preview } = this.state;
 
     return (
       <div className={settingsStyle}>
         <div onClick={this.handleImageClick} className={imageContainer}>
+          <button
+            onClick={this.clearImage}
+            className="button is-small is-danger"
+            disabled={!imageChosen}
+          >
+            Revert
+          </button>
           <a href={avatar}>
-            <img className={avatarSmallStyle} src={avatar} alt="avatar" />
+            <img
+              className={avatarSmallStyle}
+              src={preview || avatar}
+              alt="avatar"
+            />
           </a>
         </div>
         <div className={uploadStyle}>

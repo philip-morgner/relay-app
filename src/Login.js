@@ -29,7 +29,7 @@ export default class Login extends React.Component {
       return;
     }
     sessionStorage.setItem("access_token", currUser.access_token);
-    sessionStorage.setItem("user", currUser.user_id);
+    // sessionStorage.setItem("user", currUser.user_id);
     this.props.history.push("/home", { currUser });
   };
 

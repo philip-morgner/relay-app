@@ -12,7 +12,6 @@ const container = css({
   margin: "auto"
 });
 
-// TODO change <EditAvatar />
 export default class SettingsManager extends React.Component {
   prepareSettings = userId => {
     return SETTINGS.map((setting, key) => {

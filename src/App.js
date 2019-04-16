@@ -4,6 +4,8 @@ import Logout from "./Logout";
 
 import { headerStyle, bodyStyle } from "./styles";
 
+// TODO:
+// HOC to wrap components in header and footer
 class App extends React.Component {
   render() {
     const { currUser } = this.props.location.state;
