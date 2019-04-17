@@ -5,8 +5,11 @@ import { QueryRenderer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import ThreeDots from "./components/ThreeDots";
 import User from "./User";
+
 import {
   listStyle,
+  listHeaderStyle,
+  listBodyStyle,
   sectionTitle,
   buttonStyle,
   imageStyle,
@@ -14,9 +17,7 @@ import {
 } from "./styles";
 
 export default class UserList extends React.Component {
-  state = {
-    editsOpen: false
-  };
+  state = { chatPartnerId: "" };
 
   backToLogin = () => (
     <button onClick={this.logout} className="button is-danger">
@@ -26,30 +27,55 @@ export default class UserList extends React.Component {
     </button>
   );
 
+  renderUserList = data => {
+    const { currUser, goToChat } = this.props;
+    console.log("heyy", goToChat);
+    return data.userList.map(
+      ({ user_id }, index) =>
+        currUser.user_id !== user_id && (
+          <User key={`${index}`} userId={user_id} goToChat={goToChat} />
+        )
+    );
+  };
+
   render() {
     const { currUser } = this.props;
     const actions = [
-      { name: "avatar", href: `settings/${currUser.user_id}` },
-      { name: "username", href: `settings/${currUser.user_id}` },
-      { name: "email", href: `settings/${currUser.user_id}` },
-      { name: "password", href: `settings/${currUser.user_id}` }
+      {
+        label: "edit avatar",
+        pathname: `settings/${currUser.user_id}`,
+        state: { selected: "avatar" }
+      },
+      {
+        label: "edit username",
+        pathname: `settings/${currUser.user_id}`,
+        state: { selected: "username" }
+      },
+      {
+        label: "edit email",
+        pathname: `settings/${currUser.user_id}`,
+        state: { selected: "email" }
+      },
+      {
+        label: "edit password",
+        pathname: `settings/${currUser.user_id}`,
+        state: { selected: "password" }
+      }
     ];
 
     return (
       <div className={listStyle}>
-        <h1 className={sectionTitle}>CHATS</h1>
-        <div className={currUserStyle}>
-          <img className={imageStyle} src={currUser.avatar} alt="avatar" />
-          {currUser.username}
-          <ThreeDots actions={actions} currUser={currUser} />
+        <div className={listHeaderStyle}>
+          <h1 className={sectionTitle}>CHATS</h1>
+          <div className={currUserStyle}>
+            <img className={imageStyle} src={currUser.avatar} alt="avatar" />
+            {currUser.username}
+            <ThreeDots actions={actions} currUser={currUser} />
+          </div>
         </div>
-
         <QueryRenderer
           environment={environment}
           query={query}
-          variables={{
-            userId: this.props.userId
-          }}
           render={({ error, props }) => {
             if (error) {
               return <div>{error.message}</div>;
@@ -57,15 +83,11 @@ export default class UserList extends React.Component {
               if (!props.userList) {
                 return this.backToLogin();
               }
-              return props.userList.map(
-                ({ user_id }, index) =>
-                  currUser.user_id !== user_id && (
-                    <User
-                      key={`${index}`}
-                      userId={user_id}
-                      currUser={currUser}
-                    />
-                  )
+              console.log("heyy");
+              return (
+                <div className={listBodyStyle}>
+                  {this.renderUserList(props)}
+                </div>
               );
             }
             return <div>Loading...</div>;

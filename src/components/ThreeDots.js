@@ -6,23 +6,28 @@ import { ellipsisStyle } from "../styles";
 
 export default class ThreeDots extends React.Component {
   state = {
-    editsOpen: false
+    dropdownOpen: false
+  };
+
+  toggle = () => {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
   };
 
   render() {
     const { actions } = this.props;
+    const { dropdownOpen } = this.state;
 
     return (
       <div
         className={classnames("dropdown", {
-          "is-active": this.state.editsOpen
+          "is-active": dropdownOpen
         })}
       >
         <div className="dropdown-trigger">
           <span
-            onClick={() => {
-              this.setState({ editsOpen: !this.state.editsOpen });
-            }}
+            onClick={this.toggle}
             className={ellipsisStyle}
             aria-haspopup="true"
             aria-controls="dropdown-menu"
@@ -31,18 +36,14 @@ export default class ThreeDots extends React.Component {
           </span>
         </div>
         <div className="dropdown-menu" id="dropdown-menu" role="menu">
-          <div
-            className={classnames("dropdown-content", {
-              "is-active": this.state.editsOpen
-            })}
-          >
-            {actions.map(({ name, href }, key) => (
+          <div className={dropdownOpen ? "is-active" : ""}>
+            {actions.map(({ label, pathname, state }, key) => (
               <Link
                 key={key}
-                to={{ pathname: href, state: { selected: name } }}
+                to={{ pathname, state }}
                 className="dropdown-item"
               >
-                {`edit ${name}`}
+                {label}
               </Link>
             ))}
           </div>

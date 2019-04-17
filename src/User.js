@@ -3,7 +3,7 @@ import environment from "./environment";
 import { QueryRenderer } from "react-relay";
 import { pathOr } from "ramda";
 import graphql from "babel-plugin-relay/macro";
-import defaultAvatar from "./assets/default_avatar.png";
+
 import {
   userContainer as container,
   personalDataStyle,
@@ -12,21 +12,18 @@ import {
 } from "./styles";
 
 class User extends React.Component {
-  goToChat = userId => () => {
-    console.log(userId, this.props.currUser.user_id);
-  };
-
   render() {
+    const { goToChat } = this.props;
+    console.log(this.props);
     const { avatar, username, email, user_id } = pathOr(
       { username: "", email: "" },
       ["user"],
       this.props
     );
-    const avatarSrc = avatar || defaultAvatar;
 
     return (
-      <div className={container} onClick={this.goToChat(user_id)}>
-        <img className={imageStyle} src={avatarSrc} alt="avatar" />
+      <div className={container} onClick={goToChat(user_id)}>
+        <img className={imageStyle} src={avatar} alt="avatar" />
         <div className={personalDataStyle}>
           <div>
             <dd className={italic}>username</dd>
@@ -62,7 +59,7 @@ export default variables => (
       if (error) {
         return <div>{error.message}</div>;
       } else if (props) {
-        return <User user={props.user} currUser={variables.currUser} />;
+        return <User user={props.user} goToChat={variables.goToChat} />;
       }
       return <div>Loading...</div>;
     }}

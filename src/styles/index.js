@@ -1,21 +1,5 @@
 import { css } from "glamor";
 
-// App
-export const headerStyle = css({
-  position: "fixed",
-  height: 50,
-  width: "100%",
-  display: "flex",
-  justifyContent: "flex-end",
-  backgroundColor: "green",
-  zIndex: 1,
-  padding: 8
-});
-
-export const bodyStyle = css({
-  paddingTop: 50
-});
-
 // Login
 export const loginContainer = css({
   width: 300,
@@ -50,6 +34,26 @@ export const buttonContainerStyle = css({
   marginTop: 16
 });
 
+// App
+export const headerStyle = css({
+  gridArea: "header / c-start / chat-head / c-end",
+  display: "flex",
+  justifyContent: "flex-end",
+  backgroundColor: "green",
+  padding: 8
+});
+
+export const bodyStyle = css({
+  display: "grid",
+  gridTemplateRows:
+    "[header] 50px [chat-head] 160px [chat-list] 550px [chat-end]",
+  gridTemplateColumns: "[c-start] 1fr [c-mid] 2fr [c-end]",
+  width: "90%",
+  margin: "auto",
+  border: "1px solid grey",
+  boxShadow: "4px 2px 2px lightgrey"
+});
+
 // Logout
 export const buttonStyle = css({
   color: "white"
@@ -57,12 +61,10 @@ export const buttonStyle = css({
 
 // User
 export const userContainer = css({
-  margin: "0 32px",
-  padding: 8,
+  padding: "8px 8px 8px 16px",
   borderBottom: "1px dashed lightgrey",
   display: "flex",
   alignItems: "flex-start",
-  overflow: "hidden",
   backgroundColor: "white"
 });
 
@@ -91,11 +93,21 @@ export const italic = css({
 
 // UserList
 export const listStyle = css({
-  width: "33%",
-  // vertically just the whole damn page
-  height: 1000,
+  gridArea: "chat-head / c-start / chat-list / c-mid",
   textAlign: "center",
-  backgroundColor: "#E8FFED"
+  backgroundColor: "#E8FFED",
+  borderRight: "1px solid grey"
+});
+
+export const listHeaderStyle = css({
+  backgroundColor: "white",
+  borderBottom: "1px solid grey",
+  height: "100%"
+});
+
+export const listBodyStyle = css({
+  height: 550,
+  overflow: "auto"
 });
 
 export const sectionTitle = css({
@@ -116,4 +128,30 @@ export const ellipsisStyle = css({
   "& :hover": {
     cursor: "pointer"
   }
+});
+
+// Chats
+export const chatStyle = css({
+  gridArea: "chat-head / c-mid / chat-end / c-end",
+  display: "grid",
+  gridTemplateRows: "[start] 160px [mid] auto [end]",
+  gridTemplateColumns: "[start] auto [end]"
+});
+
+export const chatHeaderStyle = css({
+  gridArea: "start / start / mid / end",
+  borderBottom: "1px solid grey",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  padding: 16
+});
+
+export const chatWindowStyle = css({
+  gridArea: "mid / start / end / end",
+  backgroundColor: "#E8FFED",
+  display: "grid",
+  gridTemplateRows: "[chat] auto [input] 50px [end]",
+  gridTemplateColumns: "[start] auto [end]",
+  alignItems: "end"
 });
