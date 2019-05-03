@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 60b1061620012bdc02260e94a6bc3f70
+ * @relayHash e77cc3998776976b748e8221520023fe
  */
 
 /* eslint-disable */
@@ -21,7 +21,7 @@ export type EditMutationVariables = {|
 |};
 export type EditMutationResponse = {|
   +updateUser: ?{|
-    +username: ?string
+    +user_id: ?string
   |}
 |};
 export type EditMutation = {|
@@ -38,7 +38,7 @@ mutation EditMutation(
   $confirmPassword: String!
 ) {
   updateUser(userId: $userId, updateUser: $updateUser, confirmPassword: $confirmPassword) {
-    username
+    user_id
   }
 }
 */
@@ -96,7 +96,7 @@ v1 = [
       {
         "kind": "ScalarField",
         "alias": null,
-        "name": "username",
+        "name": "user_id",
         "args": null,
         "storageKey": null
       }
@@ -123,11 +123,11 @@ return {
     "operationKind": "mutation",
     "name": "EditMutation",
     "id": null,
-    "text": "mutation EditMutation(\n  $userId: String!\n  $updateUser: UpdateUserInputType\n  $confirmPassword: String!\n) {\n  updateUser(userId: $userId, updateUser: $updateUser, confirmPassword: $confirmPassword) {\n    username\n  }\n}\n",
+    "text": "mutation EditMutation(\n  $userId: String!\n  $updateUser: UpdateUserInputType\n  $confirmPassword: String!\n) {\n  updateUser(userId: $userId, updateUser: $updateUser, confirmPassword: $confirmPassword) {\n    user_id\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '849b95dc2709c444adbde267f070c546';
+(node/*: any*/).hash = 'f9391686d5b59d8c39da4398e2de61e8';
 module.exports = node;

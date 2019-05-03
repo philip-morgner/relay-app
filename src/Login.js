@@ -2,18 +2,22 @@ import React from "react";
 import environment from "./environment";
 import graphql from "babel-plugin-relay/macro";
 import { commitMutation } from "react-relay";
+import { Link } from "react-router-dom";
+
 import {
   loginContainer as container,
   pageTitle,
   inputStyle,
-  buttonContainerStyle
+  buttonContainerStyle,
+  buttonStyle
 } from "./styles";
 
 // TODO error handling false credentials
 export default class Login extends React.Component {
   state = {
     user: "",
-    password: ""
+    password: "",
+    invalidLogin: false
   };
 
   handleUserInput = e => {
@@ -27,10 +31,12 @@ export default class Login extends React.Component {
   handleLoginSuccess = ({ currUser }) => {
     if (!currUser.access_token) {
       console.warn("Invalid user or password!");
+      this.setState({ invalidLogin: true });
       return;
     }
+    this.setState({ invalidLogin: false });
     sessionStorage.setItem("access_token", currUser.access_token);
-    // sessionStorage.setItem("user", currUser.user_id);
+    sessionStorage.setItem("user", currUser.user_id);
     this.props.history.push("/home", { currUser });
   };
 
@@ -66,6 +72,13 @@ export default class Login extends React.Component {
     });
   };
 
+  handleEnter = e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      this.handleLogin();
+    }
+  };
+
   render() {
     return (
       <div className={container}>
@@ -84,9 +97,15 @@ export default class Login extends React.Component {
             type="password"
             placeholder="password"
             onChange={this.handlePasswordInput}
+            onKeyDown={this.handleEnter}
           />
         </div>
         <div className={buttonContainerStyle}>
+          <button className="button is-info">
+            <Link to="/register" className={buttonStyle}>
+              Register
+            </Link>
+          </button>
           <button className="button is-success" onClick={this.handleLogin}>
             Sign In
           </button>

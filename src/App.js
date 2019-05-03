@@ -2,6 +2,8 @@ import React from "react";
 import UserList from "./UserList";
 import Logout from "./Logout";
 import Chat from "./Chat";
+import { Link } from "react-router-dom";
+import { buttonStyle } from "./styles";
 
 import { headerStyle, bodyStyle } from "./styles";
 
@@ -12,7 +14,6 @@ class App extends React.Component {
   state = { chatPartnerId: "" };
 
   goToChat = chatPartnerId => () => {
-    console.log(chatPartnerId);
     this.setState({ chatPartnerId });
   };
 
@@ -21,10 +22,15 @@ class App extends React.Component {
     return (
       <div className={bodyStyle}>
         <div className={headerStyle}>
+          <button className="button is-link">
+            <Link to={`/settings/${currUser.user_id}`} className={buttonStyle}>
+              Settings
+            </Link>
+          </button>
           <Logout />
         </div>
         <UserList currUser={currUser} goToChat={this.goToChat} />
-        <Chat chatPartnerId={this.state.chatPartnerId} />
+        <Chat currUser={currUser} chatPartnerId={this.state.chatPartnerId} />
       </div>
     );
   }

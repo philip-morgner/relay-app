@@ -29,9 +29,8 @@ export const inputStyle = css({
 export const buttonContainerStyle = css({
   width: "inherit",
   display: "flex",
-  justifyContent: "flex-end",
-  paddingRight: 16,
-  marginTop: 16
+  justifyContent: "space-between",
+  padding: 16
 });
 
 // App

@@ -29,7 +29,6 @@ export default class UserList extends React.Component {
 
   renderUserList = data => {
     const { currUser, goToChat } = this.props;
-    console.log("heyy", goToChat);
     return data.userList.map(
       ({ user_id }, index) =>
         currUser.user_id !== user_id && (
@@ -83,7 +82,6 @@ export default class UserList extends React.Component {
               if (!props.userList) {
                 return this.backToLogin();
               }
-              console.log("heyy");
               return (
                 <div className={listBodyStyle}>
                   {this.renderUserList(props)}

@@ -14,7 +14,6 @@ import {
 class User extends React.Component {
   render() {
     const { goToChat } = this.props;
-    console.log(this.props);
     const { avatar, username, email, user_id } = pathOr(
       { username: "", email: "" },
       ["user"],

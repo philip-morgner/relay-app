@@ -13,15 +13,9 @@ class EditComponent extends React.Component {
   state = {
     [this.props.type]: "",
     confirmValue: "",
-    password: "",
-    update: ""
+    confirmPassword: "",
+    updated: false
   };
-
-  resetState = () => ({
-    [this.props.type]: "",
-    confirmValue: "",
-    password: ""
-  });
 
   handleInput = e => {
     this.setState({ [this.props.type]: e.target.value });
@@ -32,12 +26,16 @@ class EditComponent extends React.Component {
   };
 
   handlePasswordInput = e => {
-    this.setState({ password: e.target.value });
+    this.setState({ confirmPassword: e.target.value });
   };
 
   createVariables = () => {
     const userId = pathOr("", ["currUser", "user_id"], this.props);
-    const { confirmValue, password, [this.props.type]: value } = this.state;
+    const {
+      confirmValue,
+      confirmPassword,
+      [this.props.type]: value
+    } = this.state;
 
     const isValid = value === confirmValue;
 
@@ -45,7 +43,7 @@ class EditComponent extends React.Component {
       return {
         userId,
         updateUser: { [this.props.type]: value },
-        confirmPassword: password
+        confirmPassword
       };
     }
     return {};
@@ -53,13 +51,19 @@ class EditComponent extends React.Component {
 
   handleSubmit = () => {
     const variables = this.createVariables();
+    console.log(variables);
     if (!isEmpty(variables)) {
       commitMutation(environment, {
         mutation,
         variables,
-        onCompleted: ({ updateUser: { [this.props.type]: update } }) => {
-          if (!isNil(update)) {
-            this.setState({ update, ...this.resetState() });
+        onCompleted: ({ updateUser: { user_id } }) => {
+          if (!isNil(user_id)) {
+            this.setState({
+              updated: true,
+              [this.props.type]: "",
+              confirmValue: "",
+              confirmPassword: ""
+            });
             this.props.relay.refetch(null, null, null, { force: true });
           }
         },
@@ -72,7 +76,7 @@ class EditComponent extends React.Component {
     <div className="notification is-success">
       <button
         onClick={() => {
-          this.setState({ update: "" });
+          this.setState({ updated: false });
         }}
         className="delete"
       />
@@ -83,12 +87,19 @@ class EditComponent extends React.Component {
   render() {
     const { type, currUser } = this.props;
     const passwordType = type === "password";
-    const updated = !isEmpty(this.state.update);
-    const { confirmValue, password, [type]: value } = this.state;
-
+    const {
+      confirmValue,
+      confirmPassword,
+      [type]: value,
+      updated
+    } = this.state;
+    console.log("updated", updated);
     return (
       <div>
-        {updated && this.renderSuccessNotification(currUser[type])}
+        {updated &&
+          this.renderSuccessNotification(
+            passwordType ? "password" : currUser[type]
+          )}
         <div className={inputStyle}>
           <label htmlFor={`${type}`}>{currUser[type]}</label>
           <input
@@ -111,7 +122,7 @@ class EditComponent extends React.Component {
         </div>
         <div className={inputStyle}>
           <input
-            value={password}
+            value={confirmPassword}
             className="input"
             type="password"
             placeholder={passwordType ? "old password" : "password"}
@@ -162,7 +173,7 @@ const mutation = graphql`
       updateUser: $updateUser
       confirmPassword: $confirmPassword
     ) {
-      username
+      user_id
     }
   }
 `;
@@ -174,7 +185,6 @@ export default ({ userId, type }) => (
     variables={{ userId }}
     render={({ error, props }) => {
       if (error || !path(["user"], props)) {
-        console.log("error");
         return null;
       }
       return (

@@ -65,7 +65,13 @@ input RegistrationInputType {
 }
 
 type RegistrationType {
+  user_id: ID
   access_token: String
+  username: String
+  email: String
+  password: String
+  hasAvatar: Boolean
+  avatar: String
 }
 
 type RemoveMessageType {

@@ -1,7 +1,7 @@
 import React from "react";
 import graphql from "babel-plugin-relay/macro";
-import { QueryRenderer, createRefetchContainer } from "react-relay";
-import { isEmpty, path, pathOr } from "ramda";
+import { QueryRenderer } from "react-relay";
+import { isEmpty, path, pathOr, isNil } from "ramda";
 
 import environment from "../environment";
 import { css } from "glamor";
@@ -45,12 +45,17 @@ export const labelStyle = css({
 });
 
 // TODO
-// style of buttons and img (img differs in size after file is chosen)
+// style of notification, buttons and img (img differs in size after file is chosen)
 // handleImageClick: make avatarPreviewStyle, another click: back to normal (avatarSmallStyle)
 class EditAvatarComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { image: {}, preview: null };
+    this.state = {
+      image: {},
+      preview: null,
+      uploadStatus: null,
+      optimisticResponse: null
+    };
     this.chooseFile = React.createRef();
   }
 
@@ -62,23 +67,24 @@ class EditAvatarComponent extends React.Component {
     const image = e.target.files[0];
     console.log(image.size);
     if (image.size > MAX_IMAGE_SIZE) {
-      // add error handling
-      console.log("image too big");
-      return;
+      this.setState({ uploadStatus: 400 });
     }
-    this.setState({ image, preview: URL.createObjectURL(image) });
+    this.setState({
+      image,
+      preview: URL.createObjectURL(image),
+      uploadStatus: null
+    });
   };
 
   clearImage = () => {
     this.setState({ image: {}, preview: null });
   };
 
-  send = () => {
+  send = avatarUploadUrl => {
     const imageUpload = new FormData();
     imageUpload.append("file", this.state.image);
-    const { avatar } = pathOr("", ["user"], this.props);
 
-    return fetch(avatar, {
+    return fetch(avatarUploadUrl, {
       method: "POST",
       headers: {
         Authorization: sessionStorage.getItem("access_token")
@@ -88,31 +94,75 @@ class EditAvatarComponent extends React.Component {
   };
 
   handleSubmit = () => {
-    this.send()
-      .then(() => window.location.reload())
-      .catch(e => console.log(e));
+    const { avatar } = pathOr("", ["user"], this.props);
+    const end = avatar.lastIndexOf("/");
+    const avatarUploadUrl = avatar.slice(0, end);
+    this.send(avatarUploadUrl)
+      .then(res => {
+        if (!(res.status === 200)) {
+          this.clearImage();
+        }
+        this.setState(prevState => ({
+          image: {},
+          preview: null,
+          uploadStatus: res.status,
+          optimisticResponse: prevState.preview
+        }));
+      })
+      .catch(e => console.log("error", e.message));
+  };
+
+  renderNotification = status => (
+    <div
+      className={`notification ${status === 200 ? "is-success" : "is-danger"}`}
+    >
+      <button
+        onClick={() => {
+          this.setState({ image: {}, uploadStatus: null });
+        }}
+        className="delete"
+      />
+      {status === 200
+        ? "Avatar successfully uploaded!"
+        : status === 400
+        ? "Choose image of size 24MB or less"
+        : "Choose a different image! Accepted image types are: jpg, jpeg, png, svg"}
+    </div>
+  );
+
+  getAvatarSrc = avatar => {
+    const { preview, optimisticResponse } = this.state;
+    if (!isNil(preview)) {
+      return preview;
+    }
+    if (!isNil(optimisticResponse)) {
+      return optimisticResponse;
+    }
+    return avatar;
   };
 
   render() {
-    const { image } = this.state;
+    const { image, uploadStatus } = this.state;
     const { avatar } = pathOr("", ["user"], this.props);
     const imageChosen = !isEmpty(image);
-    const { preview } = this.state;
+    const imageUploaded = !isNil(uploadStatus);
+    console.log("state", this.state);
 
     return (
       <div className={settingsStyle}>
+        {imageUploaded && this.renderNotification(uploadStatus)}
         <div onClick={this.handleImageClick} className={imageContainer}>
           <button
             onClick={this.clearImage}
             className="button is-small is-danger"
-            disabled={!imageChosen}
+            disabled={!imageChosen || imageUploaded}
           >
             Revert
           </button>
           <a href={avatar}>
             <img
               className={avatarSmallStyle}
-              src={preview || avatar}
+              src={this.getAvatarSrc(avatar)}
               alt="avatar"
             />
           </a>
@@ -138,24 +188,12 @@ class EditAvatarComponent extends React.Component {
 }
 
 const query = graphql`
-  query EditAvatarRefetchQuery($userId: String) {
+  query EditAvatarQuery($userId: String) {
     user(userId: $userId) {
-      ...EditAvatar_user
+      avatar
     }
   }
 `;
-
-const EditAvatarComponentRefetchContainer = createRefetchContainer(
-  EditAvatarComponent,
-  {
-    user: graphql`
-      fragment EditAvatar_user on UserType {
-        avatar
-      }
-    `
-  },
-  query
-);
 
 export default ({ userId }) => (
   <QueryRenderer
@@ -164,11 +202,9 @@ export default ({ userId }) => (
     variables={{ userId }}
     render={({ error, props }) => {
       if (error || !path(["user"], props)) {
-        console.log("errore");
         return null;
       }
-      console.log("props edit comp", props.user);
-      return <EditAvatarComponentRefetchContainer user={props.user} />;
+      return <EditAvatarComponent user={props.user} />;
     }}
   />
 );

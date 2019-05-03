@@ -1,13 +1,9 @@
 import React from "react";
 import { QueryRenderer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import { Link } from "react-router-dom";
-import { path } from "ramda";
 
 import environment from "../environment";
-import ThreeDots from "../components/ThreeDots";
 import { imageStyle, chatHeaderStyle } from "../styles";
-import { css } from "glamor";
 
 export default class ChatWindow extends React.Component {
   render() {
@@ -25,7 +21,6 @@ export default class ChatWindow extends React.Component {
             return <div>{error.message}</div>;
           } else if (props) {
             const { avatar, username } = props.user;
-            console.log("chat header props", props);
             return (
               <div className={chatHeaderStyle}>
                 <img className={imageStyle} src={avatar} alt="avatar" />
